@@ -19,6 +19,7 @@
   <main>
     <h2>Your Cart</h2>
     <div id="cartContents"></div>
+    <div id="cartMessage" style="text-align:center;margin:1rem;"></div>
   </main>
   <footer>© 2025 TechNova Store</footer>
   <script>
@@ -45,8 +46,11 @@
     function renderCart() {
       const cartDiv = document.getElementById('cartContents');
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let username = localStorage.getItem('username');
+      let userId = localStorage.getItem('userId');
       if (!cart.length) {
         cartDiv.innerHTML = '<p>Your cart is empty.</p>';
+        document.getElementById('cartMessage').textContent = '';
         return;
       }
       let total = 0;
@@ -77,6 +81,7 @@
         </table>
         <p style="text-align:right;"><strong>Total:</strong> ${total.toFixed(2)} USD</p>
         <button onclick="clearCart()">Clear Cart</button>
+        ${username && userId ? '<button onclick="placeOrder()" style="margin-left:1rem;">Place Order</button>' : '<div style="margin-top:1rem;color:#f00;">You must log in to place an order.</div>'}
       `;
     }
     function removeFromCart(idx) {
@@ -102,10 +107,44 @@
         qtyInput.value = cart[idx].stock_quantity;
       }
     }
+    async function placeOrder() {
+      let userId = localStorage.getItem('userId');
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (!userId) {
+        alert('You must log in to place an order.');
+        window.location.href = 'login.html';
+        return;
+      }
+      if (!cart.length) {
+        alert('Your cart is empty.');
+        return;
+      }
+      try {
+        const res = await fetch('http://localhost:3000/place-order', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ userId, items: cart })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.removeItem('cart');
+          renderCart();
+          document.getElementById('cartMessage').style.color = 'green';
+          document.getElementById('cartMessage').textContent = 'Order placed successfully!';
+        } else {
+          document.getElementById('cartMessage').style.color = 'red';
+          document.getElementById('cartMessage').textContent = data.message || 'Order failed.';
+        }
+      } catch (err) {
+        document.getElementById('cartMessage').style.color = 'red';
+        document.getElementById('cartMessage').textContent = 'Error placing order.';
+      }
+    }
     renderCart();
     window.removeFromCart = removeFromCart;
     window.clearCart = clearCart;
     window.updateQuantity = updateQuantity;
+    window.placeOrder = placeOrder;
   </script>
 </body>
 </html>

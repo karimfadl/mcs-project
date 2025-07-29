@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS OrderItems;
 DROP TABLE IF EXISTS Orders;
 DROP TABLE IF EXISTS Products;
 DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Reviews;
 
 -- 1. Users table
 CREATE TABLE IF NOT EXISTS Users (
@@ -66,5 +67,17 @@ CREATE TABLE IF NOT EXISTS CartItems (
   quantity INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (cart_id) REFERENCES Cart(cart_id),
+  FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+
+-- 7. Reviews table
+CREATE TABLE IF NOT EXISTS Reviews (
+  review_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  product_id INT,
+  rating INT CHECK(rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES Users(id),
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );

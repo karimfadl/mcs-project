@@ -4,6 +4,20 @@
   <meta charset="UTF-8">
   <title>Your Account | TechNova Store</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .review-modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.3);
+      justify-content: center; align-items: center;
+    }
+    .review-content {
+      background: #fff; padding: 2rem; border-radius: 8px; min-width: 250px;
+      box-shadow: 0 2px 10px #2224;
+    }
+  </style>
 </head>
 <body>
   <header></header>
@@ -20,7 +34,30 @@
     <h2>Your Account</h2>
     <div id="userDetails"></div>
     <h3>Your Orders</h3>
-    <div id="ordersList">Coming soon...</div>
+    <div id="ordersList">Loading...</div>
+    <!-- Review Modal -->
+    <div id="reviewModal" class="review-modal">
+      <div class="review-content">
+        <h4>Write a Review</h4>
+        <form id="reviewForm">
+          <input type="hidden" id="reviewProductId" />
+          <label for="reviewRating">Rating:</label>
+          <select id="reviewRating" required>
+            <option value="">Choose</option>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★</option>
+            <option value="3">★★★</option>
+            <option value="2">★★</option>
+            <option value="1">★</option>
+          </select><br><br>
+          <label for="reviewComment">Comment:</label><br>
+          <textarea id="reviewComment" rows="3" style="width:100%;" required></textarea><br>
+          <button type="submit">Submit Review</button>
+          <button type="button" onclick="closeReviewModal()">Cancel</button>
+        </form>
+        <div id="reviewMsg" style="color:green;margin-top:5px;"></div>
+      </div>
+    </div>
   </main>
   <footer>© 2025 TechNova Store</footer>
   <script>
@@ -43,6 +80,7 @@
     // Show user info
     const username = localStorage.getItem('username');
     const email = localStorage.getItem('email');
+    const userId = localStorage.getItem('userId');
     if (!username) {
       window.location.href = 'login.html';
     } else {
@@ -55,6 +93,91 @@
       localStorage.clear();
       window.location.href = 'index.html';
     };
+
+    // Review Modal functions
+    function openReviewModal(productId) {
+      document.getElementById('reviewProductId').value = productId;
+      document.getElementById('reviewRating').value = '';
+      document.getElementById('reviewComment').value = '';
+      document.getElementById('reviewMsg').textContent = '';
+      document.getElementById('reviewModal').style.display = 'flex';
+    }
+    function closeReviewModal() {
+      document.getElementById('reviewModal').style.display = 'none';
+    }
+
+    // Submit review
+    document.getElementById('reviewForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const productId = document.getElementById('reviewProductId').value;
+      const rating = document.getElementById('reviewRating').value;
+      const comment = document.getElementById('reviewComment').value;
+      if (!rating || !comment) return;
+      try {
+        const res = await fetch('http://localhost:3000/reviews', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            user_id: userId,
+            product_id: productId,
+            rating,
+            comment
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('reviewMsg').style.color = 'green';
+          document.getElementById('reviewMsg').textContent = 'Review submitted!';
+          setTimeout(() => closeReviewModal(), 1200);
+        } else {
+          document.getElementById('reviewMsg').style.color = 'red';
+          document.getElementById('reviewMsg').textContent = data.message || 'Failed to submit.';
+        }
+      } catch (err) {
+        document.getElementById('reviewMsg').style.color = 'red';
+        document.getElementById('reviewMsg').textContent = 'Failed to submit review.';
+      }
+    };
+
+    // Fetch and show orders with "Write Review" buttons
+    async function loadOrders() {
+      const ordersList = document.getElementById('ordersList');
+      if (!userId) {
+        ordersList.innerHTML = "<p>You are not logged in.</p>";
+        return;
+      }
+      try {
+        const res = await fetch(`http://localhost:3000/orders/${userId}`);
+        const orders = await res.json();
+        if (!orders.length) {
+          ordersList.innerHTML = "<p>No orders found.</p>";
+          return;
+        }
+        ordersList.innerHTML = orders.map(order => `
+          <div class="order-block" style="border:1px solid #ccc;margin:1rem 0;padding:1rem;">
+            <b>Order #${order.order_id}</b> — ${order.status} — <small>${order.order_date.split('T')[0]}</small><br>
+            <b>Total:</b> ${order.total_amount} USD<br>
+            <b>Items:</b>
+            <ul>
+              ${order.items.map(item => `
+                <li>
+                  <img src="${item.product_image}" style="height:20px;vertical-align:middle;">
+                  ${item.product_name} — Qty: ${item.quantity} — ${item.unit_price} USD
+                  <button onclick="openReviewModal('${item.product_id}')">Write Review</button>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `).join('');
+      } catch (err) {
+        ordersList.innerHTML = "<p>Error loading orders.</p>";
+      }
+    }
+    loadOrders();
+
+    // Make modal functions available
+    window.openReviewModal = openReviewModal;
+    window.closeReviewModal = closeReviewModal;
   </script>
 </body>
 </html>
