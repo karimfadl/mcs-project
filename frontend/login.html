@@ -1,33 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TechNova Store - Login</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Login | TechNova Store</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header></header>
-<nav>
-  <a href="index.html">Home</a>
-  <a href="products.html">Products</a>
-  <a href="cart.html">Cart</a>
-  <a href="login.html">Login</a>
-</nav>
+  <header></header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="cart.html">Cart</a>
+    <a href="register.html">Register</a>
+  </nav>
   <main>
     <h2>Login</h2>
-    <form id="loginForm">
+    <form id="loginForm" style="max-width:370px;margin:0 auto;">
       <label for="email">Email:</label>
-      <input type="email" id="email" required>
+      <input type="email" id="email" name="email" required>
       <label for="password">Password:</label>
-      <input type="password" id="password" required>
+      <input type="password" id="password" name="password" required>
       <button type="submit">Login</button>
     </form>
-    <p>Don't have an account? <a href="register.html">Register here</a></p>
+    <div id="loginMessage" style="text-align:center;margin-top:1rem;"></div>
+    <p style="text-align:center;margin-top:1rem;">
+      Don't have an account? <a href="register.html">Register here</a>
+    </p>
   </main>
-  <footer>
-    <p>&copy; 2025 TechNova Store</p>
-  </footer>
-  <!-- We will add JS later -->
+  <footer>© 2025 TechNova Store</footer>
+
+  <script>
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const messageDiv = document.getElementById('loginMessage');
+
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('userId', data.userId);
+        messageDiv.style.color = 'green';
+        messageDiv.textContent = 'Login successful! Redirecting to home...';
+        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+      } else {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'Login failed: ' + data.message;
+      }
+    } catch (err) {
+      messageDiv.style.color = 'red';
+      messageDiv.textContent = 'Error connecting to server.';
+    }
+  });
+  </script>
 </body>
 </html>

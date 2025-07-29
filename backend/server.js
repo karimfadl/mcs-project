@@ -38,10 +38,11 @@ const Product = sequelize.define('Product', {
   price: DataTypes.DECIMAL,
   image_url: DataTypes.STRING,
   stock_quantity: DataTypes.INTEGER,
-  category: DataTypes.STRING
+  category: DataTypes.STRING,
+  created_at: DataTypes.DATE
 }, {
   tableName: 'Products',
-  timestamps: false
+  timestamps: false    // <--- IMPORTANT! Your table does not use createdAt/updatedAt
 });
 
 // Test DB connection
@@ -59,6 +60,28 @@ app.post('/register', async (req, res) => {
   const password_hash = await bcrypt.hash(password, 10);
   await User.create({ username, email, password_hash });
   res.json({ message: 'User registered!' });
+});
+
+// Login route
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Missing fields' });
+  }
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid email or password' });
+  }
+  const valid = await bcrypt.compare(password, user.password_hash);
+  if (!valid) {
+    return res.status(401).json({ message: 'Invalid email or password' });
+  }
+  res.json({
+    message: 'Login successful',
+    username: user.username,
+    userId: user.id || user.user_id, // Support both possible keys
+    email: user.email
+  });
 });
 
 // Products route

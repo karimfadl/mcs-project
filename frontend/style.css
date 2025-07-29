@@ -18,8 +18,8 @@ header {
   background-image: url('logo.png');
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 260px auto;   /* Adjust this to fit your logo size */
-  min-height: 120px;             /* Make this smaller for a thinner header */
+  background-size: contain;
+  min-height: 150px;
   width: 100%;
   margin: 0;
   border-bottom: 4px solid #fff;
@@ -78,52 +78,73 @@ h2 {
   gap: 2rem;
   padding: 1rem 0;
 }
+
 .product-card {
   border: 1px solid #ddd;
   border-radius: 15px;
   background: #fff;
   padding: 1.3rem 1rem 1rem 1rem;
-  width: 220px;
+  width: 260px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  /* Remove min-height or height! */
   transition: transform 0.15s, box-shadow 0.15s;
 }
-.product-card:hover {
-  transform: translateY(-6px) scale(1.025);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-}
+
 .product-card img {
   width: 100%;
+  height: 140px;
+  object-fit: contain;
+  background: #fff;
   border-radius: 8px;
   margin-bottom: 0.6rem;
 }
-.product-card h3 {
-  margin: 0.3rem 0 0.2rem 0;
-  font-size: 1.18rem;
-  text-align: center;
+
+.product-description {
+  font-size: 0.99rem;
+  color: #444;
+  background: #f3f3f3;
+  border-radius: 7px;
+  padding: 0.7rem;
+  margin-top: 0.4rem;
+  text-align: left;
+  width: 100%;
+  word-break: break-word;
+  box-sizing: border-box;
+  /* REMOVE any height or max-height! */
+  display: none;
 }
-.product-card p {
-  margin: 0.15rem 0 0.3rem 0;
-  color: #333;
-  font-size: 1rem;
-  text-align: center;
+
+.product-description.show {
+  display: block !important;
 }
-button {
+
+/* Button styles */
+.add-to-cart-btn, .read-more-btn {
+  margin-top: 0.5rem;
   background-color: #ff9800;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 0.6rem 1.3rem;
-  margin-top: 0.6rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.18s;
 }
-button:hover {
+
+.read-more-btn {
+  margin-left: 10px;
+  background-color: #007bff;
+}
+
+.add-to-cart-btn:hover {
   background-color: #e67c00;
+}
+.read-more-btn:hover {
+  background-color: #0056b3;
 }
 
 /* Cart & Forms */

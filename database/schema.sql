@@ -1,12 +1,23 @@
-CREATE TABLE Users (
-  user_id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(50),
-  email VARCHAR(100),
-  password_hash VARCHAR(255),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Drop tables in reverse dependency order (so no FK issues)
+DROP TABLE IF EXISTS CartItems;
+DROP TABLE IF EXISTS Cart;
+DROP TABLE IF EXISTS OrderItems;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Products;
+DROP TABLE IF EXISTS Users;
+
+-- 1. Users table
+CREATE TABLE IF NOT EXISTS Users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  createdAt DATETIME,
+  updatedAt DATETIME
 );
 
-CREATE TABLE Products (
+-- 2. Products table
+CREATE TABLE IF NOT EXISTS Products (
   product_id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100),
   description TEXT,
@@ -17,17 +28,19 @@ CREATE TABLE Products (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Orders (
+-- 3. Orders table
+CREATE TABLE IF NOT EXISTS Orders (
   order_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT,
   order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status VARCHAR(50),
   total_amount DECIMAL(10,2),
   shipping_address TEXT,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
-CREATE TABLE OrderItems (
+-- 4. OrderItems table
+CREATE TABLE IF NOT EXISTS OrderItems (
   order_item_id INT AUTO_INCREMENT PRIMARY KEY,
   order_id INT,
   product_id INT,
@@ -37,14 +50,16 @@ CREATE TABLE OrderItems (
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
-CREATE TABLE Cart (
+-- 5. Cart table
+CREATE TABLE IF NOT EXISTS Cart (
   cart_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES Users(user_id)
+  FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
-CREATE TABLE CartItems (
+-- 6. CartItems table
+CREATE TABLE IF NOT EXISTS CartItems (
   cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
   cart_id INT,
   product_id INT,
