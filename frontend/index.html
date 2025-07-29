@@ -1,28 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TechNova Store - Home</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Home | TechNova Store</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header></header>
-<nav>
-  <a href="index.html">Home</a>
-  <a href="products.html">Products</a>
-  <a href="cart.html">Cart</a>
-  <a href="login.html">Login</a>
-</nav>
+  <header></header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html">Products</a>
+    <a href="cart.html">Cart</a>
+    <a href="account.html" id="accountLink" style="display:none;">Account</a>
+    <a href="login.html" id="loginLink">Login</a>
+    <a href="register.html" id="registerLink">Register</a>
+    <a href="#" id="logoutLink" style="display:none;">Logout</a>
+  </nav>
   <main>
-    <h2>Featured Products</h2>
-    <div class="product-list">
-      <!-- Products will be loaded here by JavaScript -->
-    </div>
+    <h2>Welcome to TechNova Store!</h2>
+    <p style="text-align:center;">
+      Your one-stop shop for the latest gadgets and accessories.<br>
+      Browse our featured products below, or <a href="products.html">see all products</a>.
+    </p>
+    <h3 style="text-align:center;margin-top:2rem;">Featured Products</h3>
+    <div class="product-list" id="productList"></div>
   </main>
-  <footer>
-    <p>&copy; 2025 TechNova Store</p>
-  </footer>
+  <footer>© 2025 TechNova Store</footer>
+  <script>
+    function updateMenu() {
+      const username = localStorage.getItem('username');
+      if (username) {
+        document.getElementById('accountLink').style.display = 'inline';
+        document.getElementById('logoutLink').style.display = 'inline';
+        document.getElementById('loginLink').style.display = 'none';
+        document.getElementById('registerLink').style.display = 'none';
+      } else {
+        document.getElementById('accountLink').style.display = 'none';
+        document.getElementById('logoutLink').style.display = 'none';
+        document.getElementById('loginLink').style.display = 'inline';
+        document.getElementById('registerLink').style.display = 'inline';
+      }
+    }
+    updateMenu();
+    document.getElementById('logoutLink').onclick = function() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    };
+  </script>
   <script src="app.js"></script>
 </body>
 </html>

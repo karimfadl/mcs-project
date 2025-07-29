@@ -11,7 +11,10 @@
     <a href="index.html">Home</a>
     <a href="products.html">Products</a>
     <a href="cart.html">Cart</a>
-    <a href="register.html">Register</a>
+    <a href="account.html" id="accountLink" style="display:none;">Account</a>
+    <a href="login.html" id="loginLink">Login</a>
+    <a href="register.html" id="registerLink">Register</a>
+    <a href="#" id="logoutLink" style="display:none;">Logout</a>
   </nav>
   <main>
     <h2>Login</h2>
@@ -28,37 +31,49 @@
     </p>
   </main>
   <footer>© 2025 TechNova Store</footer>
-
   <script>
-  document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const messageDiv = document.getElementById('loginMessage');
-
-    try {
-      const response = await fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('username', data.username);
-        localStorage.setItem('userId', data.userId);
-        messageDiv.style.color = 'green';
-        messageDiv.textContent = 'Login successful! Redirecting to home...';
-        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
-      } else {
-        messageDiv.style.color = 'red';
-        messageDiv.textContent = 'Login failed: ' + data.message;
+    function updateMenu() {
+      const username = localStorage.getItem('username');
+      if (username) {
+        window.location.href = 'account.html'; // Redirect if already logged in
       }
-    } catch (err) {
-      messageDiv.style.color = 'red';
-      messageDiv.textContent = 'Error connecting to server.';
+      document.getElementById('accountLink').style.display = 'none';
+      document.getElementById('logoutLink').style.display = 'none';
+      document.getElementById('loginLink').style.display = 'inline';
+      document.getElementById('registerLink').style.display = 'inline';
     }
-  });
+    updateMenu();
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const messageDiv = document.getElementById('loginMessage');
+
+      try {
+        const response = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('username', data.username);
+          localStorage.setItem('userId', data.userId);
+          localStorage.setItem('email', data.email);
+          messageDiv.style.color = 'green';
+          messageDiv.textContent = 'Login successful! Redirecting to account...';
+          setTimeout(() => { window.location.href = 'account.html'; }, 1000);
+        } else {
+          messageDiv.style.color = 'red';
+          messageDiv.textContent = 'Login failed: ' + data.message;
+        }
+      } catch (err) {
+        messageDiv.style.color = 'red';
+        messageDiv.textContent = 'Error connecting to server.';
+      }
+    });
   </script>
 </body>
 </html>

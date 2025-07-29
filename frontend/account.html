@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cart | TechNova Store</title>
+  <title>Your Account | TechNova Store</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,8 +17,10 @@
     <a href="#" id="logoutLink" style="display:none;">Logout</a>
   </nav>
   <main>
-    <h2>Your Cart</h2>
-    <div id="cartContents">Coming soon...</div>
+    <h2>Your Account</h2>
+    <div id="userDetails"></div>
+    <h3>Your Orders</h3>
+    <div id="ordersList">Coming soon...</div>
   </main>
   <footer>© 2025 TechNova Store</footer>
   <script>
@@ -37,6 +39,18 @@
       }
     }
     updateMenu();
+
+    // Show user info
+    const username = localStorage.getItem('username');
+    const email = localStorage.getItem('email');
+    if (!username) {
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('userDetails').innerHTML =
+        `<p><strong>Username:</strong> ${username}</p>` +
+        (email ? `<p><strong>Email:</strong> ${email}</p>` : '');
+    }
+
     document.getElementById('logoutLink').onclick = function() {
       localStorage.clear();
       window.location.href = 'index.html';
