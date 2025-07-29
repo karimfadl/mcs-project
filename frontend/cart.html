@@ -18,7 +18,7 @@
   </nav>
   <main>
     <h2>Your Cart</h2>
-    <div id="cartContents">Coming soon...</div>
+    <div id="cartContents"></div>
   </main>
   <footer>© 2025 TechNova Store</footer>
   <script>
@@ -41,6 +41,71 @@
       localStorage.clear();
       window.location.href = 'index.html';
     };
+
+    function renderCart() {
+      const cartDiv = document.getElementById('cartContents');
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (!cart.length) {
+        cartDiv.innerHTML = '<p>Your cart is empty.</p>';
+        return;
+      }
+      let total = 0;
+      cartDiv.innerHTML = `
+        <table style="width:100%;text-align:left;">
+          <tr>
+            <th>Product</th><th>Price</th><th>Qty</th><th>Update</th><th>Remove</th>
+          </tr>
+          ${cart.map((item, i) => {
+            total += item.price * item.quantity;
+            return `
+              <tr>
+                <td>${item.name}</td>
+                <td>${item.price} USD</td>
+                <td>
+                  <input type="number" min="1" max="${item.stock_quantity}" value="${item.quantity}" id="qty-${i}" style="width:50px;">
+                  <small>of ${item.stock_quantity} in stock</small>
+                </td>
+                <td>
+                  <button onclick="updateQuantity(${i})">Save</button>
+                </td>
+                <td>
+                  <button onclick="removeFromCart(${i})">Remove</button>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </table>
+        <p style="text-align:right;"><strong>Total:</strong> ${total.toFixed(2)} USD</p>
+        <button onclick="clearCart()">Clear Cart</button>
+      `;
+    }
+    function removeFromCart(idx) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(idx, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+    function clearCart() {
+      localStorage.removeItem('cart');
+      renderCart();
+    }
+    function updateQuantity(idx) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const qtyInput = document.getElementById('qty-' + idx);
+      const qty = parseInt(qtyInput.value, 10);
+      if (qty > 0 && qty <= cart[idx].stock_quantity) {
+        cart[idx].quantity = qty;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+      } else {
+        alert('Not enough in stock!');
+        qtyInput.value = cart[idx].stock_quantity;
+      }
+    }
+    renderCart();
+    window.removeFromCart = removeFromCart;
+    window.clearCart = clearCart;
+    window.updateQuantity = updateQuantity;
   </script>
 </body>
 </html>
