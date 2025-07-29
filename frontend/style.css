@@ -1,33 +1,199 @@
-body {
-  font-family: Arial, sans-serif;
+html, body {
+  height: 100%;
   margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f8f8f8;
+  box-sizing: border-box;
 }
-header, footer {
-  background-color: #333;
-  color: #fff;
-  padding: 1rem;
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header with logo banner */
+header {
+  background-color: #222;
+  background-image: url('logo.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 260px auto;   /* Adjust this to fit your logo size */
+  min-height: 120px;             /* Make this smaller for a thinner header */
+  width: 100%;
+  margin: 0;
+  border-bottom: 4px solid #fff;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.09);
+}
+
+/* Navigation bar */
+nav {
+  width: 100%;
+  background: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4rem 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 2px 7px rgba(0,0,0,0.08);
 }
 nav a {
   color: #fff;
-  margin-right: 1rem;
+  margin: 0 1.3rem;
   text-decoration: none;
+  font-size: 1.17rem;
+  font-weight: 500;
+  transition: color 0.22s, background 0.18s;
+  padding: 8px 17px;
+  border-radius: 7px;
+  letter-spacing: 0.5px;
 }
+nav a:hover {
+  color: #ff9800;
+  background: #222;
+}
+
+main {
+  flex: 1 0 auto;
+  padding: 2rem 1rem 2rem 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+h2 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  margin-top: 0;
+}
+
+/* Product List & Cards */
 .product-list {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2rem;
-  padding: 1rem;
+  padding: 1rem 0;
 }
 .product-card {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background: #fff;
+  padding: 1.3rem 1rem 1rem 1rem;
+  width: 220px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.product-card:hover {
+  transform: translateY(-6px) scale(1.025);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
 .product-card img {
   width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+}
+.product-card h3 {
+  margin: 0.3rem 0 0.2rem 0;
+  font-size: 1.18rem;
+  text-align: center;
+}
+.product-card p {
+  margin: 0.15rem 0 0.3rem 0;
+  color: #333;
+  font-size: 1rem;
+  text-align: center;
 }
 button {
-  background-color: #007bff;
+  background-color: #ff9800;
   color: #fff;
   border: none;
-  padding: 0.5rem;
+  border-radius: 8px;
+  padding: 0.6rem 1.3rem;
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+button:hover {
+  background-color: #e67c00;
+}
+
+/* Cart & Forms */
+.cart-list {
+  margin: 2rem auto 0 auto;
+  max-width: 700px;
+  background: #fff;
+  padding: 2rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 12px rgba(0,0,0,0.05);
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 350px;
+  margin: 1.5rem auto 0 auto;
+  background: #fff;
+  padding: 2rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.04);
+}
+form label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+form input {
+  padding: 0.6rem;
+  border: 1px solid #bbb;
+  border-radius: 7px;
+  font-size: 1rem;
+}
+form button {
+  margin-top: 1rem;
+}
+
+/* Footer always at bottom */
+footer {
+  background: #333;
+  color: #fff;
+  padding: 1.1rem 0;
+  text-align: center;
+  font-size: 1rem;
+  margin-top: auto;
+  flex-shrink: 0;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 700px) {
+  header {
+    min-height: 90px;
+    background-size: cover;
+  }
+  nav a {
+    margin: 0 0.5rem;
+    font-size: 1rem;
+    padding: 7px 7px;
+  }
+  .product-list {
+    gap: 1rem;
+  }
+  .product-card {
+    width: 96vw;
+    max-width: 350px;
+  }
+  main {
+    padding: 1rem 0.4rem 1rem 0.4rem;
+  }
 }
